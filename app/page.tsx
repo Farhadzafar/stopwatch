@@ -4,15 +4,33 @@ import { useState, useEffect, useRef } from "react";
 import { Play, Pause, RotateCcw } from "lucide-react";
 
 const backgroundImages = [
+  "https://images.pexels.com/photos/6149690/pexels-photo-6149690.jpeg",
+  "https://images.pexels.com/photos/6512981/pexels-photo-6512981.jpeg",
+  "https://images.pexels.com/photos/4444815/pexels-photo-4444815.jpeg",
+  "https://images.pexels.com/photos/26409489/pexels-photo-26409489.jpeg",
+  "https://images.pexels.com/photos/11738635/pexels-photo-11738635.jpeg",
+  "https://images.pexels.com/photos/27408594/pexels-photo-27408594.jpeg",
+  "https://images.pexels.com/photos/13071331/pexels-photo-13071331.jpeg",
+  "https://images.pexels.com/photos/11167638/pexels-photo-11167638.jpeg",
+  "https://images.pexels.com/photos/8451262/pexels-photo-8451262.jpeg",
+  "https://images.pexels.com/photos/414144/pexels-photo-414144.jpeg",
+  "https://images.pexels.com/photos/3748174/pexels-photo-3748174.jpeg",
   "https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg",
+  "https://images.pexels.com/photos/3234559/pexels-photo-3234559.jpeg",
   "https://images.pexels.com/photos/16705982/pexels-photo-16705982.jpeg",
+  "https://images.pexels.com/photos/31713509/pexels-photo-31713509.jpeg",
   "https://images.pexels.com/photos/1519088/pexels-photo-1519088.jpeg",
+  "https://images.pexels.com/photos/447329/pexels-photo-447329.jpeg",
+  "https://images.pexels.com/photos/3363556/pexels-photo-3363556.jpeg",
   "https://images.pexels.com/photos/2603464/pexels-photo-2603464.jpeg",
   "https://images.pexels.com/photos/28518041/pexels-photo-28518041.jpeg",
+  "https://images.pexels.com/photos/16944052/pexels-photo-16944052.jpeg",
   "https://images.pexels.com/photos/19577642/pexels-photo-19577642.jpeg",
   "https://images.pexels.com/photos/19193838/pexels-photo-19193838.jpeg",
+  "https://images.pexels.com/photos/14187938/pexels-photo-14187938.jpeg",
   "https://images.pexels.com/photos/16963652/pexels-photo-16963652.jpeg",
   "https://images.pexels.com/photos/19558160/pexels-photo-19558160.jpeg",
+  "https://images.pexels.com/photos/7731696/pexels-photo-7731696.jpeg",
 ];
 
 export default function StopwatchPage() {
@@ -45,8 +63,8 @@ export default function StopwatchPage() {
 
   useEffect(() => {
     const bgInterval = setInterval(() => {
-      setBgIndex((prevIndex) => (prevIndex + 1) % backgroundImages.length);
-    }, 50000);
+      setBgIndex(() => Math.floor(Math.random() * backgroundImages.length));
+    }, 5000);
 
     return () => clearInterval(bgInterval);
   }, []);
