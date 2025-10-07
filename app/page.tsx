@@ -1,103 +1,159 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect, useRef } from "react";
+import { Play, Pause, RotateCcw } from "lucide-react";
+
+const backgroundImages = [
+  "https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg",
+  "https://images.pexels.com/photos/16705982/pexels-photo-16705982.jpeg",
+  "https://images.pexels.com/photos/1519088/pexels-photo-1519088.jpeg",
+  "https://images.pexels.com/photos/2603464/pexels-photo-2603464.jpeg",
+  "https://images.pexels.com/photos/28518041/pexels-photo-28518041.jpeg",
+  "https://images.pexels.com/photos/19577642/pexels-photo-19577642.jpeg",
+  "https://images.pexels.com/photos/19193838/pexels-photo-19193838.jpeg",
+  "https://images.pexels.com/photos/16963652/pexels-photo-16963652.jpeg",
+  "https://images.pexels.com/photos/19558160/pexels-photo-19558160.jpeg",
+];
+
+export default function StopwatchPage() {
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [bgIndex, setBgIndex] = useState(0);
+  const animationFrameRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (isRunning && startTime !== null) {
+      const updateTime = () => {
+        const now = Date.now();
+        setElapsedTime(now - startTime);
+        animationFrameRef.current = requestAnimationFrame(updateTime);
+      };
+      animationFrameRef.current = requestAnimationFrame(updateTime);
+    } else {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    }
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [isRunning, startTime]);
+
+  useEffect(() => {
+    const bgInterval = setInterval(() => {
+      setBgIndex((prevIndex) => (prevIndex + 1) % backgroundImages.length);
+    }, 5000);
+
+    return () => clearInterval(bgInterval);
+  }, []);
+
+  const formatTime = (milliseconds: number) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    const centiseconds = Math.floor((milliseconds % 1000) / 10);
+
+    return {
+      hours: hours.toString().padStart(2, "0"),
+      minutes: minutes.toString().padStart(2, "0"),
+      seconds: seconds.toString().padStart(2, "0"),
+      centiseconds: centiseconds.toString().padStart(2, "0"),
+    };
+  };
+
+  const handleStartPause = () => {
+    if (isRunning) {
+      setIsRunning(false);
+    } else {
+      setStartTime(Date.now() - elapsedTime);
+      setIsRunning(true);
+    }
+  };
+
+  const handleReset = () => {
+    setIsRunning(false);
+    setStartTime(null);
+    setElapsedTime(0);
+  };
+
+  const { hours, minutes, seconds, centiseconds } = formatTime(elapsedTime);
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="h-screen flex items-center justify-center relative overflow-hidden ">
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000"
+        style={{
+          backgroundImage: `url(${backgroundImages[bgIndex]})`,
+        }}
+      />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      <div className=" w-full h-auto relative z-10 flex flex-col items-center gap-8  ">
+        {/* Time Display */}
+        <div className="flex flex-col items-center gap-2 text-stone-200 font-mono">
+          <div className="flex items-baseline gap-1 tabular-nums">
+            <span className="text-[120px] md:text-[160px] font-bold leading-none tracking-tight drop-shadow-[0_0_25px_#0BA6DF]">
+              {hours}
+            </span>
+            <span className="text-[120px] md:text-[160px] font-bold leading-none drop-shadow-[0_0_25px_#0BA6DF]">
+              :
+            </span>
+            <span className="text-[120px] md:text-[160px] font-bold leading-none tracking-tight drop-shadow-[0_0_25px_#0BA6DF]">
+              {minutes}
+            </span>
+            <span className="text-[120px] md:text-[160px] font-bold leading-none drop-shadow-[0_0_25px_#0BA6DF]">
+              :
+            </span>
+            <span className="text-[120px] md:text-[160px] font-bold leading-none tracking-tight drop-shadow-[0_0_25px_#0BA6DF]">
+              {seconds}
+            </span>
+            <span className="text-[80px] md:text-[100px] font-bold leading-none tracking-tight drop-shadow-[0_0_25px_#0BA6DF]">
+              .{centiseconds}
+            </span>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Control Buttons */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={handleStartPause}
+            className="w-16 h-16 rounded-full border-white bg-white border-2    hover:border-2 hover:border-stone-300 text-black flex items-center justify-center hover:opacity-90 transition-opacity shadow-lg"
+            aria-label={isRunning ? "Pause" : "Start"}
+          >
+            {isRunning ? (
+              <Pause className="w-6 h-6" fill="currentColor" />
+            ) : (
+              <Play className="w-6 h-6 ml-1" fill="currentColor" />
+            )}
+          </button>
+
+          <button
+            onClick={handleReset}
+            className="w-16 h-16 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center hover:bg-gray-100  hover:text-black transition-colors shadow-lg border-2 border-gray-200 "
+            aria-label="Reset"
+          >
+            <RotateCcw className="w-5 h-5 font-extrabold" />
+          </button>
+        </div>
+      </div>
+
+      <div className="absolute bottom-8 left-0 right-0 z-10 flex justify-center">
+        <p className="text-white text-xl md:text-2xl font-sans  text-center max-w-2xl px-4 drop-shadow">
+          Power by: Farhad Ahmad Zafari |{" "}
+          <a
+            href="https://github.com/Farhadzafar"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-gray-300"
+          >
+            GitHub
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
