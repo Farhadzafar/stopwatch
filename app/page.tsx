@@ -67,7 +67,7 @@ export default function StopwatchPage() {
   useEffect(() => {
     const bgInterval = setInterval(() => {
       setBgIndex((prevIndex) => (prevIndex + 1) % backgroundImages.length);
-    }, 300000);
+    }, 10000);
 
     return () => clearInterval(bgInterval);
   }, []);
