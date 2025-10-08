@@ -67,7 +67,7 @@ export default function StopwatchPage() {
   useEffect(() => {
     const bgInterval = setInterval(() => {
       setBgIndex((prevIndex) => (prevIndex + 1) % backgroundImages.length);
-    }, 300000);
+    }, 10000);
 
     return () => clearInterval(bgInterval);
   }, []);
@@ -105,7 +105,7 @@ export default function StopwatchPage() {
   const { hours, minutes, seconds, centiseconds } = formatTime(elapsedTime);
 
   return (
-    <div className="h-screen flex items-center justify-center relative overflow-hidden ">
+    <div className="h-screen flex items-center justify-center relative overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000"
         style={{
@@ -113,36 +113,39 @@ export default function StopwatchPage() {
         }}
       />
 
-      <div className=" w-full h-auto relative z-10 flex flex-col items-center gap-8  ">
+      {/* subtle dark overlay for contrast on mobile */}
+      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+
+      <div className="w-full max-w-[420px] px-6 sm:px-8 h-auto relative z-10 flex flex-col items-center gap-6 py-safe">
         {/* Time Display */}
-        <div className="flex flex-col items-center gap-2 text-stone-200 font-mono">
-          <div className="flex items-baseline gap-1 tabular-nums">
-            <span className="text-[120px] md:text-[160px] font-bold leading-none tracking-tight drop-shadow-[0_0_25px_#0BA6DF]">
+        <div className="flex flex-col items-center gap-1 text-stone-200 font-mono">
+          <div className="flex items-baseline gap-1 tabular-nums whitespace-nowrap">
+            <span className="text-[56px] sm:text-[96px] md:text-[160px] font-bold leading-none tracking-tight drop-shadow-[0_0_18px_rgba(11,166,223,0.9)]">
               {hours}
             </span>
-            <span className="text-[120px] md:text-[160px] font-bold leading-none drop-shadow-[0_0_25px_#0BA6DF]">
+            <span className="text-[56px] sm:text-[96px] md:text-[160px] font-bold leading-none drop-shadow-[0_0_18px_rgba(11,166,223,0.9)]">
               :
             </span>
-            <span className="text-[120px] md:text-[160px] font-bold leading-none tracking-tight drop-shadow-[0_0_25px_#0BA6DF]">
+            <span className="text-[56px] sm:text-[96px] md:text-[160px] font-bold leading-none tracking-tight drop-shadow-[0_0_18px_rgba(11,166,223,0.9)]">
               {minutes}
             </span>
-            <span className="text-[120px] md:text-[160px] font-bold leading-none drop-shadow-[0_0_25px_#0BA6DF]">
+            <span className="text-[56px] sm:text-[96px] md:text-[160px] font-bold leading-none drop-shadow-[0_0_18px_rgba(11,166,223,0.9)]">
               :
             </span>
-            <span className="text-[120px] md:text-[160px] font-bold leading-none tracking-tight drop-shadow-[0_0_25px_#0BA6DF]">
+            <span className="text-[56px] sm:text-[96px] md:text-[160px] font-bold leading-none tracking-tight drop-shadow-[0_0_18px_rgba(11,166,223,0.9)]">
               {seconds}
             </span>
-            <span className="text-[80px] md:text-[100px] font-bold leading-none tracking-tight drop-shadow-[0_0_25px_#0BA6DF]">
+            <span className="text-[22px] sm:text-[36px] md:text-[100px] font-bold leading-none tracking-tight drop-shadow-[0_0_12px_rgba(11,166,223,0.9)]">
               .{centiseconds}
             </span>
           </div>
         </div>
 
         {/* Control Buttons */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             onClick={handleStartPause}
-            className="w-16 h-16 rounded-full border-white bg-white border-2    hover:border-2 hover:border-stone-300 text-black flex items-center justify-center hover:opacity-90 transition-opacity shadow-lg"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-white bg-white border-2 text-black flex items-center justify-center hover:opacity-90 transition-opacity shadow-lg"
             aria-label={isRunning ? "Pause" : "Start"}
           >
             {isRunning ? (
@@ -154,7 +157,7 @@ export default function StopwatchPage() {
 
           <button
             onClick={handleReset}
-            className="w-16 h-16 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center hover:bg-gray-100  hover:text-black transition-colors shadow-lg border-2 border-gray-200 "
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center hover:bg-gray-100  hover:text-black transition-colors shadow-lg border-2 border-gray-200"
             aria-label="Reset"
           >
             <RotateCcw className="w-5 h-5 font-extrabold" />
@@ -162,8 +165,8 @@ export default function StopwatchPage() {
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-0 right-0 z-10 flex justify-center">
-        <p className="text-white text-xl md:text-2xl font-sans  text-center max-w-2xl px-4 drop-shadow">
+      <div className="absolute bottom-6 left-0 right-0 z-10 flex justify-center px-4">
+        <p className="text-white text-sm sm:text-base md:text-lg font-sans text-center max-w-2xl px-2 drop-shadow">
           Power by: Farhad Ahmad Zafari |{" "}
           <a
             href="https://github.com/Farhadzafar"
